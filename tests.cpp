@@ -24,6 +24,12 @@ void Tests::test_all() {
 	test_to_string();
 	test_DTO();
 	test_get_DTO();
+	test_notificare();
+	test_add_notificare();
+	test_find_notificare();
+	test_generate_notificare();
+	test_export_notificare();
+	test_empty_notificare();
 }
 
 void Tests::test_validator() {
@@ -363,3 +369,122 @@ void Tests::test_to_string() {
 		"\033[1;33mSurface: \033[0m100;   \033[1;33mType: \033[0mrented.");
 }
 
+void Tests::test_notificare() {
+	vector<Tentant> tests;
+	Repo repo(tests);
+	Validator validator;
+	Notificare notificare;
+	Service service(repo, validator, notificare);
+	Tentant tentant1{ 1, "Andreea", 100, "bought" };
+	Tentant tentant2{ 2, "Maria", 200, "rented" };
+	service.add_service(1, "Andreea", 100, "bought");
+	service.add_service(2, "Maria", 200, "rented");
+	notificare.add_notificare(tentant1);
+	notificare.add_notificare(tentant2);
+
+	const vector<Tentant>& tentants = notificare.get_notificare();
+	assert(tentants.size() == 2);
+
+	notificare.empty_notificare();
+	assert(tentants.size() == 0);
+
+	notificare.generate_notificare(1, service.get_all());
+	assert(tentants.size() == 1);
+}
+
+void Tests::test_add_notificare() {
+	vector<Tentant> tests;
+	Repo repo(tests);
+	Validator validator;
+	Notificare notificare;
+	Service service(repo, validator, notificare);
+	Tentant tentant1{ 1, "Andreea", 100, "bought" };
+	Tentant tentant2{ 2, "Maria", 200, "rented" };
+	service.add_service(1, "Andreea", 100, "bought");
+	service.add_service(2, "Maria", 200, "rented");
+	notificare.add_notificare(tentant1);
+	notificare.add_notificare(tentant2);
+	const vector<Tentant>& tentants = notificare.get_notificare();
+	assert(tentants.size() == 2);
+
+	try {
+		notificare.add_notificare(tentant1);
+	}
+	catch (NotificareException& mesaj) {
+		assert(mesaj.get_mesaj() == "Tenant already exists!\n");
+	}
+}
+
+void Tests::test_find_notificare() {
+	vector<Tentant> tests;
+	Repo repo(tests);
+	Validator validator;
+	Notificare notificare;
+	Service service(repo, validator, notificare);
+	Tentant tentant1{ 1, "Andreea", 100, "bought" };
+	service.add_service(1, "Andreea", 100, "bought");
+	notificare.add_notificare(tentant1);
+	assert(notificare.find_notificare(1, "Andreea") == 0);
+	assert(notificare.find_notificare(2, "Diana") == -1);
+}
+
+void Tests::test_generate_notificare() {
+	vector<Tentant> tests;
+	Repo repo(tests);
+	Validator validator;
+	Notificare notificare;
+	Service service(repo, validator, notificare);
+	Tentant tentant1{ 1, "Andreea", 100, "bought" };
+	Tentant tentant2{ 2, "Maria", 200, "rented" };
+
+	service.add_service(1, "Andreea", 100, "bought");
+	service.add_service(2, "Maria", 200, "rented");
+
+	notificare.generate_notificare(1, service.get_all());
+	const vector<Tentant>& tentants = notificare.get_notificare();
+	assert(tentants.size() == 1);
+
+	try {
+		notificare.generate_notificare(3, service.get_all());
+	}
+	catch (NotificareException& mesaj) {
+		assert(mesaj.get_mesaj() == "Not enough tenants in memory!\n");
+	}
+}
+
+void Tests::test_export_notificare() {
+	vector<Tentant> tests;
+	Repo repo(tests);
+	Validator validator;
+	Notificare notificare;
+	Service service(repo, validator, notificare);
+	Tentant tentant1{ 1, "Andreea", 100, "bought" };
+	Tentant tentant2{ 2, "Maria", 200, "rented" };
+
+	service.add_service(1, "Andreea", 100, "bought");
+	service.add_service(2, "Maria", 200, "rented");
+
+	notificare.generate_notificare(1, service.get_all());
+	notificare.export_notificare("notificare1");
+
+	notificare.export_notificare("notificare1.html");
+}
+
+void Tests::test_empty_notificare() {
+	vector<Tentant> tests;
+	Repo repo(tests);
+	Validator validator;
+	Notificare notificare;
+	Service service(repo, validator, notificare);
+	Tentant tentant1{ 1, "Andreea", 100, "bought" };
+	Tentant tentant2{ 2, "Maria", 200, "rented" };
+
+	service.add_service(1, "Andreea", 100, "bought");
+	service.add_service(2, "Maria", 200, "rented");
+
+	notificare.generate_notificare(1, service.get_all());
+	notificare.empty_notificare();
+
+	const vector<Tentant>& tentants = notificare.get_notificare();
+	assert(tentants.size() == 0);
+}

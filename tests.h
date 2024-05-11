@@ -29,6 +29,13 @@ class Tests {
 	void test_to_string();
 	void test_DTO();
 	void test_get_DTO();
+	void test_notificare();
+	void test_add_notificare();
+	void test_find_notificare();
+	void test_generate_notificare();
+	void test_export_notificare();
+	void test_empty_notificare();
+
 
 public:
 	Tests() {};

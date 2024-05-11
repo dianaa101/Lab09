@@ -27,7 +27,7 @@ void Repo::add_repo(const Tentant& tentant) {
 		this->tentants.push_back(tentant);
 	}
 	else {
-		throw RepoException("Tentant already exists!\n");
+		throw RepoException("Tenant already exists!\n");
 	}
 }
 
@@ -64,7 +64,7 @@ const Tentant& Repo::get_tentant(int number, const string& name) {
 		return this->tentants[index];
 	}
 	else {
-		throw RepoException("Tentant doesn't exist!\n");
+		throw RepoException("Tenant doesn't exist!\n");
 	}
 }
 

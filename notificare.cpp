@@ -6,7 +6,7 @@ void Notificare::add_notificare(const Tentant& tentant) {
 	const string& name = tentant.get_name();
 
 	if (find_notificare(number, name) != -1) {
-		throw NotificareException("Tenant already exists! \n");
+		throw NotificareException("Tenant already exists!\n");
 	}
 	else {
 		this->notificare.push_back(tentant);

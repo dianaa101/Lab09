@@ -2,7 +2,7 @@
 #include "repo.h"
 #include "service.h"
 #include "ui.h"
-// #include "tests.h"
+#include "tests.h"
 
 #define _CRTDBG_MAP_ALLOC
 
@@ -11,8 +11,8 @@
 using namespace std;
 
 void create() {
-	// Tests tests;
-	// tests.test_all();
+	Tests tests;
+	tests.test_all();
 
 	vector<Tentant> vector;
 	Repo repo(vector);
