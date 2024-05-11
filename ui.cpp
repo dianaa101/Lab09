@@ -220,16 +220,14 @@ void Ui::empty_notificare_ui() {
     cout << "The size of the list of notifications is: " << controller.get_notificare_size() << '\n';
 }
 
-/*
+
 void Ui::raport_ui() {
     map<string, DTO> raport = controller.raport();
-    cout << '\n'  << "Raportul este:\n" ;
-    for (const auto& [key, value] : raport) {
-        cout << key << " " << value.get_count() << '\n';
+    cout << '\n' << "Raportul este:\n";
+    for (auto it = raport.begin(); it != raport.end(); ++it) {
+        cout << it->first << " " << it->second.get_count() << '\n';
     }
 }
-*/
-
 
 void Ui::menu() {
     cout << '\n';
@@ -398,20 +396,20 @@ void Ui::run() {
             }
             break;
 
-       // case 11:
-        //    try {
-         //       raport_ui();
-         //   }
-         //   catch (RepoException& e) {
-          //      cout << e.get_mesaj();
-        //    }
-         //   catch (ValidatorException& ve) {
-         //       cout << ve.get_mesaj();
-         //   }
-         //   catch (NotificareException& ve) {
-         //       cout << ve.get_mesaj();
-         //   }
-         //   break;
+        case 11:
+            try {
+                 raport_ui();
+            }
+            catch (RepoException& e) {
+                cout << e.get_mesaj();
+            }
+            catch (ValidatorException& ve) {
+                cout << ve.get_mesaj();
+            }
+            catch (NotificareException& ve) {
+               cout << ve.get_mesaj();
+            }
+            break;
         default:
             cout << "Invalid option!!\n\n";
         }

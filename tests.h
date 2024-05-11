@@ -35,7 +35,13 @@ class Tests {
 	void test_generate_notificare();
 	void test_export_notificare();
 	void test_empty_notificare();
-
+	void test_add_notificare_srv();
+	void test_get_all_notificari();
+	void test_generate_notificare_srv();
+	void test_export_notificare_srv();
+	void test_empty_notificare_srv();
+	void test_get_notificare_size();
+	void test_raport();
 
 public:
 	Tests() {};

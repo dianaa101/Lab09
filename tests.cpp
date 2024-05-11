@@ -30,6 +30,13 @@ void Tests::test_all() {
 	test_generate_notificare();
 	test_export_notificare();
 	test_empty_notificare();
+	test_add_notificare_srv();
+	test_get_all_notificari();
+	test_generate_notificare_srv();
+	test_export_notificare_srv();
+	test_empty_notificare_srv();
+	test_get_notificare_size();
+	test_raport();
 }
 
 void Tests::test_validator() {
@@ -361,6 +368,9 @@ void Tests::test_filter() {
 
 	vector<Tentant> filteredByType = service.filter_type("bought");
 	assert(tentant1 == filteredByType[0]);
+
+	vector<Tentant> filter_by_number = service.filter_number(1);
+	assert(tentant1 == filter_by_number[0]);
 }
 
 void Tests::test_to_string() {
@@ -488,3 +498,136 @@ void Tests::test_empty_notificare() {
 	const vector<Tentant>& tentants = notificare.get_notificare();
 	assert(tentants.size() == 0);
 }
+
+void Tests::test_get_all_notificari() {
+	vector<Tentant> tests;
+	Repo repo(tests);
+	Validator validator;
+	Notificare notificare;
+	Service service(repo, validator, notificare);
+	Tentant tentant1{ 1, "Andreea", 100, "bought" };
+	Tentant tentant2{ 2, "Maria", 200, "rented" };
+
+	service.add_service(1, "Andreea", 100, "bought");
+	service.add_service(2, "Maria", 200, "rented");
+
+	notificare.generate_notificare(1, service.get_all());
+	const vector<Tentant>& tentants = service.get_all_notifications();
+	assert(tentants.size() == 1);
+}
+
+void Tests::test_add_notificare_srv() {
+	vector<Tentant> tests;
+	Repo repo(tests);
+	Validator validator;
+	Notificare notificare;
+	Service service(repo, validator, notificare);
+	Tentant tentant1{ 1, "Andreea", 100, "bought" };
+	Tentant tentant2{ 2, "Maria", 200, "rented" };
+
+	service.add_service(1, "Andreea", 100, "bought");
+	service.add_service(2, "Maria", 200, "rented");
+
+	service.add_notificare_srv(1, "Andreea", {});
+
+	const vector<Tentant>& tentants = notificare.get_notificare();
+
+	assert(tentants.size() == 1);
+
+	try {
+		service.add_notificare_srv(2, "Diana", {});
+	}
+	catch (RepoException& mesaj) {
+		assert(mesaj.get_mesaj() == "Tenant doesn't exist!\n");
+	}
+
+	auto filtru = service.filter_type("rented");
+	service.add_notificare_srv(3, "Diana", filtru);
+	assert(tentants.size() == 2);
+}
+
+void Tests::test_generate_notificare_srv() {
+	vector<Tentant> tests;
+	Repo repo(tests);
+	Validator validator;
+	Notificare notificare;
+	Service service(repo, validator, notificare);
+	Tentant tentant1{ 1, "Andreea", 100, "bought" };
+	Tentant tentant2{ 2, "Maria", 200, "rented" };
+
+	service.add_service(1, "Andreea", 100, "bought");
+	service.add_service(2, "Maria", 200, "rented");
+
+	service.generate_notificare_srv(1);
+	const vector<Tentant>& tentants = notificare.get_notificare();
+	assert(tentants.size() == 1);
+}
+
+void Tests::test_export_notificare_srv() {
+	vector<Tentant> tests;
+	Repo repo(tests);
+	Validator validator;
+	Notificare notificare;
+	Service service(repo, validator, notificare);
+	Tentant tentant1{ 1, "Andreea", 100, "bought" };
+	Tentant tentant2{ 2, "Maria", 200, "rented" };
+
+	service.add_service(1, "Andreea", 100, "bought");
+	service.add_service(2, "Maria", 200, "rented");
+
+	service.generate_notificare_srv(1);
+	service.export_notificare_srv("notificare.txt");
+}
+
+void Tests::test_empty_notificare_srv() {
+	vector<Tentant> tests;
+	Repo repo(tests);
+	Validator validator;
+	Notificare notificare;
+	Service service(repo, validator, notificare);
+	Tentant tentant1{ 1, "Andreea", 100, "bought" };
+	Tentant tentant2{ 2, "Maria", 200, "rented" };
+
+	service.add_service(1, "Andreea", 100, "bought");
+	service.add_service(2, "Maria", 200, "rented");
+
+	service.generate_notificare_srv(1);
+	service.empty_notificare_srv();
+
+	const vector<Tentant>& tentants = notificare.get_notificare();
+	assert(tentants.size() == 0);
+}
+
+void Tests::test_get_notificare_size() {
+	vector<Tentant> tests;
+	Repo repo(tests);
+	Validator validator;
+	Notificare notificare;
+	Service service(repo, validator, notificare);
+	Tentant tentant1{ 1, "Andreea", 100, "bought" };
+	Tentant tentant2{ 2, "Maria", 200, "rented" };
+
+	service.add_service(1, "Andreea", 100, "bought");
+	service.add_service(2, "Maria", 200, "rented");
+
+	service.generate_notificare_srv(1);
+	assert(service.get_notificare_size() == 1);
+}
+
+void Tests::test_raport() {
+	vector<Tentant> tests;
+	Repo repo(tests);
+	Validator validator;
+	Notificare notificare;
+	Service service(repo, validator, notificare);
+	Tentant tentant1{ 1, "Andreea", 100, "bought" };
+	Tentant tentant2{ 2, "Maria", 200, "rented" };
+
+	service.add_service(1, "Andreea", 100, "bought");
+	service.add_service(2, "Maria", 200, "rented");
+
+	map<string, DTO> raport = service.raport();
+	assert(raport["rented"].get_count() == 1);
+	assert(raport["bought"].get_count() == 1);
+}
+

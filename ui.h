@@ -25,7 +25,7 @@ class Ui {
     void add_notificare_ui();
     void export_notificare_ui();
     void empty_notificare_ui();
-   // void raport_ui();
+    void raport_ui();
     void menu();
 public:
     explicit Ui(Service& controller) : controller(controller) {
