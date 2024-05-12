@@ -1,9 +1,10 @@
 #ifndef SERVICE_H_
 #define SERVICE_H_
 
-#include "repo.h" 
 #include "validator.h" 
 #include "notificare.h"
+#include "undo.h"
+#include "repo_file.h"
 
 #include <string>
 #include <vector>
@@ -11,6 +12,7 @@
 #include <map>
 #include <random>
 #include <algorithm>
+#include <memory>
 
 
 using std::string;
@@ -19,15 +21,20 @@ using std::function;
 using std::map;
 using std::copy_if;
 using std::shuffle;
+using std::unique_ptr;
 
 
 class Service {
-    Repo& repo;
+    RepoAbs& repo;
     Validator& validator;
     Notificare& notificare;
+    std::vector < unique_ptr<UndoActiuni>> undo_actiuni;
 
 
 public:
+
+    void undo(); 
+
     const vector<Tentant>& get_all_notifications() noexcept;
 
     int get_notificare_size();
@@ -42,7 +49,7 @@ public:
 
     map<string, DTO> raport() noexcept;
 
-    Service(Repo& repo, Validator& validator, Notificare& notificare) noexcept : repo{ repo }, validator{ validator }, notificare{ notificare } {
+    Service(RepoAbs& repo, Validator& validator, Notificare& notificare) noexcept : repo{ repo }, validator{ validator }, notificare{ notificare } {
     }
 
     //nu putem lasa sa se faca copie

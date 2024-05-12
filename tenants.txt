@@ -1,0 +1,4 @@
+1,maria,50,rented
+2,ana,100,bought
+3,ana,150,rented
+1,diana,50,rented

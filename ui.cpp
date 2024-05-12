@@ -232,17 +232,21 @@ void Ui::raport_ui() {
 void Ui::menu() {
     cout << '\n';
     cout << "Tenant Menu:\n";
+    cout << "------------------------------------------------------------------\n";
     cout << "1. Add tenant\n";
     cout << "2. Update tenant\n";
     cout << "3. Delete tenant\n";
     cout << "4. Find tenant\n";
     cout << "5. Filter tenants\n";
     cout << "6. Sort tenants\n";
+    cout << "------------------------------------------------------------------\n";
     cout << "7. Generate a notification\n";
     cout << "8. Add to the list of notifications\n";
     cout << "9. Export notification\n";
     cout << "10. Empty notification\n";
     cout << "11. Generate a raport\n";
+    cout << "------------------------------------------------------------------\n";
+    cout << "12. Undo\n";
     cout << "0. Exit.\n";
 }
 
@@ -408,6 +412,18 @@ void Ui::run() {
             }
             catch (NotificareException& ve) {
                cout << ve.get_mesaj();
+            }
+            break;
+        case 12:
+            try {
+                controller.undo();
+                cout << "Undo successfully done!\n";
+            }
+            catch (RepoException& e) {
+                cout << e.get_mesaj();
+            }
+            catch (BadLuckException& ve) {
+                cout << ve.get_mesaj();
             }
             break;
         default:

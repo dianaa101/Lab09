@@ -1,6 +1,75 @@
 #include "repo.h"
 #include <iostream>
 
+RepoProb::RepoProb(float probabilitate) {
+	this->probabilitate = probabilitate;
+	elements.clear();
+}
+
+void RepoProb::add_repo(const Tentant& tentant) {
+	det_luck();
+	elements.insert(make_pair(elements.size(), tentant));
+}
+
+void RepoProb::update_repo(const Tentant& new_tentant) {
+	det_luck(); 
+	for (auto it = elements.begin(); it != elements.end(); ++it) {
+		if (it->second.get_number() == new_tentant.get_number() && it->second.get_name() == new_tentant.get_name()) {
+			it->second = new_tentant;
+			return;
+		}
+	}
+}
+
+void RepoProb::delete_repo(int number, const string& name) {
+	det_luck();
+	for (auto it = elements.begin(); it != elements.end(); ++it) {
+		if (it->second.get_number() == number && it->second.get_name() == name) {
+			elements.erase(it);
+			return;
+		}
+	}
+}
+
+Tentant& RepoProb::get_tentant(int number, const string& name) {
+	det_luck();
+	for (auto it = elements.begin(); it != elements.end(); ++it) {
+		if (it->second.get_number() == number && it->second.get_name() == name) {
+			return it->second;
+		}
+	}
+	throw RepoException("Tenant doesn't exist!\n");
+}
+
+vector<Tentant>& RepoProb::get_all() {
+	det_luck();
+	tentants.clear();
+	for (auto it = elements.begin(); it != elements.end(); ++it) {
+		tentants.push_back(it->second);
+	}
+	return tentants;
+}
+
+void RepoProb::det_luck() {
+	auto prb = int(probabilitate * 10);
+	int nr = rand() % 10;
+	if (nr <= prb) {
+		return;
+	}
+	throw BadLuckException("No luck!\n");
+}
+
+int RepoProb::find_repo(int number, const string& name) {
+	det_luck();
+	for (auto it = elements.begin(); it != elements.end(); ++it) {
+		if (it->second.get_number() == number && it->second.get_name() == name) {
+			return it->first;
+		}
+	}
+	return -1;
+}
+
+
 int Repo::find_repo(int number, const string& name) {
 	auto iterator = find_if(this->tentants.begin(),
 		this->tentants.end(), [number, name](const Tentant& tentant) noexcept {
@@ -57,8 +126,8 @@ void Repo::delete_repo(int number, const string& name) {
 
 }
 
-const Tentant& Repo::get_tentant(int number, const string& name) {
-	int index = find_repo(number, name);
+Tentant& Repo::get_tentant(int number, const string& name) {
+	const int index = find_repo(number, name);
 
 	if (index != -1) {
 		return this->tentants[index];
@@ -68,6 +137,6 @@ const Tentant& Repo::get_tentant(int number, const string& name) {
 	}
 }
 
-const vector<Tentant>& Repo::get_all() const noexcept {
+vector<Tentant>& Repo::get_all() {
 	return this->tentants;
 }

@@ -32,7 +32,6 @@ public:
 
     }
 
-    //nu lasam sa se faca copie
     Ui(const Ui& copie) = delete;
 
     void run();

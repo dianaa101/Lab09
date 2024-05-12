@@ -15,7 +15,10 @@ void create() {
 	tests.test_all();
 
 	vector<Tentant> vector;
-	Repo repo(vector);
+	// Repo repo{ vector }; 
+	FileRepo repo("tenants.txt");
+	// RepoProb repo(0.57);
+
 	Validator validator;
 	Notificare notificare;
 	Service controller(repo, validator, notificare);

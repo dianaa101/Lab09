@@ -24,7 +24,7 @@
     <ProjectGuid>{a91eda78-9add-419f-b7b1-431a59c4b8df}</ProjectGuid>
     <RootNamespace>Lab06bun</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>Lab08</ProjectName>
+    <ProjectName>Lab09</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -137,6 +137,7 @@
     <ClCompile Include="notificare.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="repo.cpp" />
+    <ClCompile Include="repo_file.cpp" />
     <ClCompile Include="service.cpp" />
     <ClCompile Include="tests.cpp" />
     <ClCompile Include="ui.cpp" />
@@ -147,9 +148,11 @@
     <ClInclude Include="exceptions.h" />
     <ClInclude Include="notificare.h" />
     <ClInclude Include="repo.h" />
+    <ClInclude Include="repo_file.h" />
     <ClInclude Include="service.h" />
     <ClInclude Include="tests.h" />
     <ClInclude Include="ui.h" />
+    <ClInclude Include="undo.h" />
     <ClInclude Include="validator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,4 +1,6 @@
 ﻿#include "tests.h"
+#include <sstream>
+#include <fstream>
 
 using namespace std;
 
@@ -23,6 +25,7 @@ void Tests::test_all() {
 	test_filter();
 	test_to_string();
 	test_DTO();
+	test_copy_DTO();
 	test_get_DTO();
 	test_notificare();
 	test_add_notificare();
@@ -37,6 +40,9 @@ void Tests::test_all() {
 	test_empty_notificare_srv();
 	test_get_notificare_size();
 	test_raport();
+	test_split();
+	test_file();
+	test_empty_file();
 }
 
 void Tests::test_validator() {
@@ -78,8 +84,14 @@ void Tests::test_copy_constructor() {
 
 void Tests::test_setters() {
 	Tentant tentant{ 1, "Andreea", 100, "bought" };
+	tentant.set_number(2);
+	assert(tentant.get_number() == 2);
 	tentant.set_name("Diana");
 	assert(tentant.get_name() == "Diana");
+	tentant.set_surface(55);
+	assert(tentant.get_surface() == 55);
+	tentant.set_type("rented");
+	assert(tentant.get_type() == "rented");
 }
 
 void Tests::test_operators() {
@@ -92,6 +104,24 @@ void Tests::test_operators() {
 	assert(test2.get_name() == "Andreea");
 	assert(test2.get_surface() == 100);
 	assert(test2.get_type() == "bought");
+
+	Tentant test3{ 3, "Ana", 200, "rented" };
+	assert(test1.operator!=(test3));
+
+	// reading and printinf
+	Tentant test4{};
+	istringstream input("4, Mihaela, 55, bought");
+	input >> test4;
+	assert(test4.get_number() == 4);
+	assert(test4.get_name() == "Mihaela");
+	assert(test4.get_surface() == 55);
+	assert(test4.get_type() == "bought");
+
+	ostringstream output;
+	output << test4;
+	string outp = output.str();
+	assert(outp == "4, Mihaela, 55, bought\n");
+
 }
 
 void Tests::test_comparison_operators() {
@@ -133,10 +163,26 @@ void Tests::test_DTO() {
 	assert(test.get_count() == 3);
 }
 
+void Tests::test_copy_DTO() {
+	DTO test{ "rented", 3 };
+	DTO test_copy(test);
+	assert(test_copy.get_count() == 3);
+}
+
 void Tests::test_get_DTO() {
 	DTO test{ "rented", 3 };
 	assert(test.get_entity_type() == "rented");
 	assert(test.get_count() == 3);
+}
+
+void Tests::test_split() {
+	string test = "1,Ana,50,rented";
+	vector<string> result = split(test, '.');
+	assert(result[0] == "1");
+	assert(result[1] == "Ana");
+	assert(result[0] == "50");
+	assert(result[0] == "rented");
+
 }
 
 void Tests::test_add_repo() {
@@ -226,6 +272,41 @@ void Tests::test_get_all() {
 	repo.add_repo(tentant2);
 	assert(repo.get_all().size() == 2);
 }
+
+void Tests::test_file() {
+	Tentant test{ 1, "Andreea", 100, "bought" };
+	Tentant test1{ 2, "Diana", 120, "rented" };
+
+	FileRepo file("test_file.txt");
+	file.add_repo(test);
+	file.add_repo(test1);
+
+	const vector<Tentant>& tentants = file.get_all();
+	assert(file.get_all().size() == 2);
+
+	file.empty_file();
+
+}
+
+void Tests::test_empty_file() {
+	Tentant test{ 1, "Andreea", 100, "bought" };
+	FileRepo file("test_file.txt");
+	file.empty_file();
+	file.add_repo(test);
+	const vector<Tentant>& tentants = file.get_all();
+	assert(tentants.size() == 1);
+
+	file.empty_file();
+	const vector<Tentant>& tentants1 = file.get_all();
+	assert(tentants1.size() == 1);
+
+	file.empty_file();
+
+}
+
+/*
+* Service
+*/
 
 void Tests::test_add_service() {
 	vector<Tentant> tests;

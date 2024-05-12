@@ -1,5 +1,13 @@
 #include "service.h"
 
+void Service::undo() {
+	if (undo_actiuni.empty()) {
+		throw RepoException("Nothing left to undo!\n");
+	}
+	undo_actiuni.back()->do_undo();
+	undo_actiuni.pop_back();
+}
+
 const vector<Tentant>& Service::get_all_notifications() noexcept {
 	return notificare.get_notificare();
 }
@@ -65,18 +73,25 @@ void Service::add_service(int number, const string& name, int surface, const str
 
 	validator.validate_tentant(tentant);
 	repo.add_repo(tentant);
+	undo_actiuni.push_back(std::make_unique<UndoAdd>(repo, tentant));
+
 }
 
 
  void Service::update_service(int number, const string& name, int surface, const string& type) {
 	Tentant tentant{ number, name, surface, type };
+	Tentant previous_tentant = repo.get_tentant(number, name);
 
 	validator.validate_tentant(tentant);
 	repo.update_repo(tentant);
+	undo_actiuni.push_back(std::make_unique<UndoUpdate>(repo, previous_tentant));
+
  }
 
 void Service::delete_service(int number, const string& name) {
+	Tentant copie = repo.get_tentant(number, name);
 	repo.delete_repo(number, name);
+	undo_actiuni.push_back(std::make_unique<UndoDelete>(repo, copie));
 }
 
 const Tentant& Service::find_service(int number, const string& name) {
@@ -90,6 +105,7 @@ const vector<Tentant>& Service::get_all() noexcept {
 vector<Tentant> Service::filter_surface(int surface) {
 	vector <Tentant> filtered;
 
+	const auto all_tentants = repo.get_all();
 	copy_if(repo.get_all().begin(), repo.get_all().end(), std::back_inserter(filtered),
 		[surface](const Tentant& tentant) noexcept {
 			return tentant.get_surface() == surface;
@@ -100,6 +116,7 @@ vector<Tentant> Service::filter_surface(int surface) {
 vector<Tentant> Service::filter_type(const string& type) {
 	vector <Tentant> filtered;
 
+	const auto all_tentants = repo.get_all();
 	copy_if(repo.get_all().begin(), repo.get_all().end(), std::back_inserter(filtered),
 		[type](const Tentant& tentant) noexcept {
 			return tentant.get_type() == type;
@@ -110,6 +127,7 @@ vector<Tentant> Service::filter_type(const string& type) {
 vector<Tentant> Service::filter_number(int number) {
 	vector <Tentant> filtered;
 
+	const auto all_tentants = repo.get_all();
 	copy_if(repo.get_all().begin(), repo.get_all().end(), std::back_inserter(filtered),
 		[number](const Tentant& tentant) noexcept {
 			return tentant.get_number() == number;

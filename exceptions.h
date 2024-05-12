@@ -30,4 +30,11 @@ public:
 	string get_mesaj() { return this->mesaj;  }
 };
 
+class BadLuckException : public exception {
+	string mesaj;
+public:
+	explicit BadLuckException(string mesaj) noexcept : mesaj(move(mesaj)) {};
+	string get_mesaj() { return this->mesaj; }
+};
+
 #endif /* EXCEPTION_H_ */

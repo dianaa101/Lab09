@@ -5,6 +5,7 @@
 #include "repo.h"
 #include "validator.h"
 #include "service.h"
+#include "repo_file.h"
 #include <assert.h>
 
 class Tests {
@@ -42,6 +43,10 @@ class Tests {
 	void test_empty_notificare_srv();
 	void test_get_notificare_size();
 	void test_raport();
+	void test_copy_DTO();
+	void test_split();
+	void test_file();
+	void test_empty_file();
 
 public:
 	Tests() {};

@@ -1,6 +1,7 @@
 #include "domain.h"
 
 #include <iostream>
+#include <sstream>
 using namespace std;
 
 Tentant::Tentant() {
@@ -50,8 +51,20 @@ const string& Tentant::get_type() const noexcept {
 // setters
 
 
-void Tentant::set_name(const string& new_name) {
+[[maybe_unused]] void Tentant::set_name(const string& new_name) {
 	this->name = new_name;
+}
+
+[[maybe_unused]] void Tentant::set_number(int new_number) {
+	this->number = new_number;
+}
+
+[[maybe_unused]] void Tentant::set_surface(int new_surface) {
+	this->surface = new_surface;
+}
+
+[[maybe_unused]] void Tentant::set_type(const string& new_type) {
+	this->type = new_type;
 }
 
 /// TO STRING PRINTARE
@@ -63,8 +76,12 @@ string Tentant::to_string_print() {
 // operators
 Tentant& Tentant::operator=(const Tentant& copy) = default;
 
-bool Tentant::operator==(const Tentant& copy) {
+bool Tentant::operator==(const Tentant& copy) noexcept {
 	return this->number == copy.number && this->name == copy.name;
+}
+
+bool Tentant::operator!=(const Tentant& copy) noexcept {
+	return !operator==(copy);
 }
 
 
@@ -104,4 +121,36 @@ bool cmp_type_surface(const Tentant& t1, const Tentant& t2) {
 	else {
 		return t1.get_surface() < t2.get_surface();
 	}
+}
+
+vector<string> split(const string& input, char delimiter) {
+	vector<string> result;
+	stringstream stream(input);
+	string item;
+	while (std::getline(stream, item, delimiter)) {
+		result.push_back(item);
+	}
+	return result;
+}
+
+std::istream& operator>>(std::istream& input, Tentant& tentant) {
+	string linie;
+	std::getline(input, linie);
+	vector<string> tokens = split(linie, ',');
+
+	if (tokens.size() != 4) {
+		return input;
+	}
+
+	tentant.set_number(std::stoi(tokens[1]));
+	tentant.set_name(tokens[0]);
+	tentant.set_surface(std::stoi(tokens[1]));
+	tentant.set_type(tokens[2]);
+
+	return input;
+}
+
+std::ostream& operator<<(std::ostream& output, const Tentant& tentant) {
+	output << tentant.get_number() << "," << tentant.get_name() << "," << tentant.get_surface() << "," << tentant.get_type() << "\n";
+	return output;
 }

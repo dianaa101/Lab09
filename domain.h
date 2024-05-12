@@ -3,9 +3,11 @@
 
 #include <string>
 #include <map>
+#include <vector>
 
 using std::map;
 using std::string;
+using std::vector;
 
 class DTO {
 	string entity_type;
@@ -92,6 +94,10 @@ public:
 	// setters
 
 	[[maybe_unused]] void set_name(const string& new_name);
+	[[maybe_unused]] void set_number(int new_number);
+	[[maybe_unused]] void set_surface(int new_surface);
+	[[maybe_unused]] void set_type(const string& new_type);
+
 
 	/*
 	* Print function
@@ -102,7 +108,12 @@ public:
 	Tentant& operator=(const Tentant& copy);
 
 	// Equality operator between two objects 
-	bool operator==(const Tentant& copy);
+	bool operator==(const Tentant& copy) noexcept;
+
+	bool operator!=(const Tentant& copy) noexcept;
+
+	friend std::istream& operator>>(std::istream& input, Tentant& tentant);
+
 
 };
 // comparatori
@@ -120,5 +131,10 @@ bool cmp_surface(const Tentant& t1, const Tentant& t2);
 bool cmp_type(const Tentant& t1, const Tentant& t2);
 
 bool cmp_type_surface(const Tentant& t1, const Tentant& t2);
+
+std::ostream& operator <<(std::ostream& output, const Tentant& tentant);
+
+vector<string> split(const string& input, char delimiter);
+
 
 #endif
