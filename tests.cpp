@@ -43,6 +43,11 @@ void Tests::test_all() {
 	test_split();
 	test_file();
 	test_empty_file();
+	test_set_path();
+	test_repo_prob();
+	test_bad_luck();
+
+	test_undo_add();
 }
 
 void Tests::test_validator() {
@@ -301,6 +306,25 @@ void Tests::test_empty_file() {
 	assert(tentants1.size() == 1);
 
 	file.empty_file();
+
+}
+
+void Tests::test_set_path() {
+	Tentant test{ 1, "Andreea", 100, "bought" };
+	FileRepo file("test_file.txt");
+	file.empty_file();
+
+	file.add_repo(test);
+	file.set_path("test_file1.txt");
+
+	const vector<Tentant>& tentants = file.get_all();
+	assert(tentants.size() == 1);
+
+	file.empty_file();
+
+	file.set_path("test_file.txt");
+	file.empty_file();
+
 
 }
 
@@ -710,5 +734,125 @@ void Tests::test_raport() {
 	map<string, DTO> raport = service.raport();
 	assert(raport["rented"].get_count() == 1);
 	assert(raport["bought"].get_count() == 1);
+}
+
+/* 
+* Repo Prob
+*/
+
+void Tests::test_repo_prob() {
+	RepoProb repo(1);
+	Tentant test{ 1, "Andreea", 100, "bought" };
+	Tentant test1{ 2, "Maria", 200, "rented" };
+
+	repo.add_repo(test);
+	repo.add_repo(test1);
+
+	const vector<Tentant>& tentants = repo.get_all();
+	assert(tentants.size() == 2);
+
+	repo.update_repo(test1);
+	assert(tentants[1].get_surface() == 200);
+
+	repo.delete_repo(1, "Andreea");
+	const vector<Tentant>& tentants1 = repo.get_all();
+	assert(tentants1.size() == 1);
+}
+
+void Tests::test_bad_luck() {
+	RepoProb repo(0);
+	Tentant test{ 1, "Andreea", 100, "bought" };
+
+	try {
+		repo.add_repo(test);
+	}
+	catch (BadLuckException& mesaj) {
+		assert(mesaj.get_mesaj() == "No luck!\n");
+	}
+
+}
+
+void Tests::test_add_repo_prob() {
+	RepoProb repo(1);
+	Tentant test{ 1, "Andreea", 100, "bought" };
+
+	repo.add_repo(test);
+
+	assert(repo.get_all().size() == 1);
+}
+
+void Tests::test_update_repo_prob() {
+	vector<Tentant> teste;
+	RepoProb repo(1);
+	Tentant test{ 1, "Andreea", 100, "bought" };
+	Tentant test1{ 2, "Diana", 150, "bought" };
+	Tentant test2{ 3, "Ana", 160, "rented" };
+
+
+	repo.add_repo(test);
+	repo.update_repo(test1);
+
+	assert(repo.find_repo(2, "Diana") == 0);
+
+	const vector<Tentant> tentants = repo.get_all();
+	assert(tentants.size() == 1);
+}
+
+void Tests::test_find_repo_prob() {
+	RepoProb repo(1);
+	Tentant test{ 1, "Andreea", 100, "bought" };
+	repo.add_repo(test);
+	assert(repo.find_repo(1, "Andreea") == 0);
+	assert(repo.find_repo(2, "Diana") == -1);
+}
+
+void Tests::test_delete_repo_prob() {
+	RepoProb repo(1);
+	Tentant test{ 1, "Andreea", 100, "bought" };
+
+	repo.add_repo(test);
+	repo.delete_repo(1, "Andreea");
+
+	assert(repo.get_all().size() == 0);
+}
+
+void Tests::test_get_tentant_prob() {
+	RepoProb repo(1);
+	Tentant test{ 1, "Andreea", 100, "bought" };
+
+	repo.add_repo(test);
+	assert(test.operator == (repo.get_tentant(1, "Andreea")));
+	try {
+		repo.get_tentant(2, "Diana");
+	}
+	catch (RepoException& mesaj) {
+		assert(mesaj.get_mesaj() == "Tentant doesn't exist!\n");
+	}
+}
+
+/*
+* UNDO
+*/
+
+void Tests::test_undo_add() {
+	FileRepo repo("test_service.txt");
+	Validator validator;
+	Notificare notificare;
+	Service service(repo, validator, notificare);
+
+	repo.empty_file();
+
+	service.add_service(1, "Diana", 100, "rented");
+	service.undo();
+	const vector<Tentant>& tentants = service.get_all();
+
+	try {
+		service.undo();
+	}
+	catch (RepoException& mesaj) {
+		assert(mesaj.get_mesaj() == "Nothing left to undo!\n");
+	}
+
+	repo.empty_file();
 }
 

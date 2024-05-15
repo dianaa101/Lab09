@@ -47,6 +47,10 @@ class Tests {
 	void test_split();
 	void test_file();
 	void test_empty_file();
+	void test_set_path();
+	void test_repo_prob();
+	void test_bad_luck();
+	void test_undo_add();
 
 public:
 	Tests() {};
