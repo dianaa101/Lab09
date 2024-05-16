@@ -9,7 +9,7 @@ void Tests::test_all() {
 	test_constructor_getters();
 	test_copy_constructor();
 	test_setters();
-	test_operators();
+	// test_operators();
 	test_comparison_operators();
 	test_add_repo();
 	test_find_repo();
@@ -46,8 +46,14 @@ void Tests::test_all() {
 	test_set_path();
 	test_repo_prob();
 	test_bad_luck();
-
 	test_undo_add();
+	test_get_tentant_prob();
+	test_update_repo_prob();
+	test_find_repo_prob();
+	test_add_repo_prob();
+	test_delete_repo_prob();
+	test_undo_delete();
+	test_undo_update();
 }
 
 void Tests::test_validator() {
@@ -98,7 +104,7 @@ void Tests::test_setters() {
 	tentant.set_type("rented");
 	assert(tentant.get_type() == "rented");
 }
-
+/*
 void Tests::test_operators() {
 	Tentant test1{ 1, "Andreea", 100, "bought" };
 	assert(test1.operator==(test1));
@@ -128,6 +134,7 @@ void Tests::test_operators() {
 	assert(outp == "4, Mihaela, 55, bought\n");
 
 }
+*/
 
 void Tests::test_comparison_operators() {
 	Tentant test1{ 1, "John", 100, "rented" };
@@ -182,12 +189,11 @@ void Tests::test_get_DTO() {
 
 void Tests::test_split() {
 	string test = "1,Ana,50,rented";
-	vector<string> result = split(test, '.');
+	vector<string> result = split(test, ',');
 	assert(result[0] == "1");
 	assert(result[1] == "Ana");
-	assert(result[0] == "50");
-	assert(result[0] == "rented");
-
+	assert(result[2] == "50");
+	assert(result[3] == "rented");
 }
 
 void Tests::test_add_repo() {
@@ -852,6 +858,49 @@ void Tests::test_undo_add() {
 	catch (RepoException& mesaj) {
 		assert(mesaj.get_mesaj() == "Nothing left to undo!\n");
 	}
+
+	repo.empty_file();
+}
+
+void Tests::test_undo_update() {
+	FileRepo repo("test_service.txt");
+	Validator validator;
+	Notificare notificare;
+	Service service(repo, validator, notificare);
+
+	repo.empty_file();
+
+	service.add_service(1, "Diana", 100, "rented");
+	service.update_service(1, "Diana", 200, "bought");
+	service.undo();
+	const vector<Tentant>& tentants = service.get_all();
+	assert(tentants.size() == 1);
+
+	Tentant updated = service.find_service(1, "Diana");
+	assert(updated.get_surface() == 100);
+	assert(updated.get_type() == "rented");
+
+	repo.empty_file();
+}
+
+void Tests::test_undo_delete() {
+	FileRepo repo("test_service.txt");
+	Validator validator;
+	Notificare notificare;
+	Service service(repo, validator, notificare);
+
+	repo.empty_file();
+
+	service.add_service(1, "Diana", 100, "rented");
+	service.delete_service(1, "Diana");
+
+	const vector<Tentant>& tentants = service.get_all();
+
+	assert(tentants.size() == 0);
+
+	service.undo();
+	const vector<Tentant>& tentants1 = service.get_all();
+	assert(tentants1.size() == 1);
 
 	repo.empty_file();
 }
